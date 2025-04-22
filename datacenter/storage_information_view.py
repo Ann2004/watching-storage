@@ -14,10 +14,6 @@ def storage_information_view(request):
         now_time = timezone.localtime(timezone.now())
         duration = get_time_spent_in_storage(entered_at_time, now_time)
         
-        # delta = now_time - entered_at_time
-        # total_seconds = int(delta.total_seconds())
-        # delta = timedelta(seconds=total_seconds)
-        
         non_closed_visit = {
             'who_entered': unclosed_visit.passcard.owner_name,
             'entered_at': entered_at_time,
