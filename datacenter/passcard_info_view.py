@@ -1,9 +1,8 @@
 from datacenter.models import Passcard
 from datacenter.models import Visit
 from django.shortcuts import render
-from django.utils import timezone
 from django.shortcuts import get_object_or_404
-from datacenter.get_time_spent_in_storage import get_time_spent_in_storage
+from .models import get_duration, format_duration, is_visit_long
 
 
 def passcard_info_view(request, passcode):
@@ -12,21 +11,14 @@ def passcard_info_view(request, passcode):
     
     this_passcard_visits = []
     for visit in visits_by_passcard: 
-        entered_at_time = visit.entered_at
-        if visit.leaved_at:
-            duration = get_time_spent_in_storage(entered_at_time, visit.leaved_at)
-        else: 
-            now_time = timezone.localtime(timezone.now())
-            duration = duration = get_time_spent_in_storage(entered_at_time, now_time)
-        
-        is_strange = False   
-        if duration.seconds > 3600:
-            is_strange = True
+        duration = format_duration(get_duration(visit))
+            
+        flag = is_visit_long(visit)
         
         passcard_visit = {
                 'entered_at': visit.entered_at,
                 'duration': duration,
-                'is_strange': is_strange
+                'is_strange': flag
         }
         this_passcard_visits.append(passcard_visit)
 
